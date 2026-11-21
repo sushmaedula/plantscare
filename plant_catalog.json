@@ -1,0 +1,22 @@
+[
+  {
+    "common_name": "Tulsi (holy basil)",
+    "botanical_name": "Ocimum tenuiflorum",
+    "source": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:453130-1"
+  },
+  {
+    "common_name": "Curry leaf",
+    "botanical_name": "Bergera koenigii (syn. Murraya koenigii)",
+    "source": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:771522-1"
+  },
+  {
+    "common_name": "Drumstick tree (moringa)",
+    "botanical_name": "Moringa oleifera",
+    "source": "https://powo.science.kew.org/taxon/584736-1"
+  },
+  {
+    "common_name": "Arabian jasmine (mogra)",
+    "botanical_name": "Jasminum sambac",
+    "source": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:609755-1"
+  }
+]
