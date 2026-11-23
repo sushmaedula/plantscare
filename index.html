@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7ef">
+  <meta name="description" content="A simple plant care journal for watering, pruning, and feeding your garden.">
+  <title>Plantscare — a little care, on time</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20382b;
+      --muted: #728078;
+      --leaf: #3c7651;
+      --leaf-dark: #295a3c;
+      --paper: #fffefa;
+      --wash: #f6f7ef;
+      --line: #e7e9df;
+      --sun: #f3d88b;
+      --rose: #f3e3dc;
+      --shadow: 0 18px 50px rgba(37, 65, 46, .08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--wash); min-height: 100vh; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 28px 28px 56px; }
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-weight: 750; letter-spacing: -.04em; font-size: 20px; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--leaf); font-size: 21px; }
+    .today { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .hero { display: grid; grid-template-columns: 1fr 280px; gap: 32px; align-items: center; padding: 0 0 34px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 13px; color: var(--leaf); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { max-width: 680px; margin: 0; font-size: clamp(40px, 6vw, 68px); letter-spacing: -.065em; line-height: .99; font-weight: 750; }
+    h1 span { color: var(--leaf); }
+    .intro { max-width: 530px; margin: 20px 0 0; color: var(--muted); line-height: 1.65; font-size: 16px; }
+    .hero-art { min-height: 220px; display: grid; place-items: center; position: relative; }
+    .sun { position: absolute; width: 155px; height: 155px; top: 20px; right: 28px; border-radius: 50%; background: var(--sun); opacity: .75; }
+    .plant-pot { position: relative; z-index: 1; display: grid; place-items: center; width: 170px; height: 170px; border-radius: 50%; background: #e5eddd; font-size: 88px; transform: rotate(-5deg); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 4px 0 30px; }
+    .stat { padding: 17px 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,254,250,.76); }
+    .stat-label { display: block; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .stat-value { display: block; margin-top: 5px; font-size: 25px; font-weight: 750; letter-spacing: -.04em; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; margin: 0 0 15px; }
+    h2 { margin: 0; font-size: 23px; letter-spacing: -.04em; }
+    .section-note { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .garden-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 20px; align-items: start; }
+    .plant-list { display: grid; gap: 12px; }
+    .plant-card, .form-card, .empty-card { border: 1px solid var(--line); border-radius: 20px; background: var(--paper); box-shadow: var(--shadow); }
+    .plant-card { padding: 20px; }
+    .plant-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .plant-name-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .plant-icon { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border-radius: 14px; background: #edf2e7; font-size: 24px; }
+    .plant-title { margin: 0; font-size: 17px; letter-spacing: -.025em; overflow-wrap: anywhere; }
+    .plant-subtitle { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .remove { border: 0; background: transparent; color: #97a198; font-size: 19px; padding: 2px 6px; border-radius: 8px; }
+    .remove:hover { color: #97554c; background: #fbefeb; }
+    .tasks { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 9px; margin-top: 18px; }
+    .task { padding: 12px; border-radius: 13px; background: #f6f7f2; }
+    .task-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .task-name { font-size: 12px; font-weight: 750; text-transform: capitalize; }
+    .task-state { color: var(--muted); font-size: 11px; }
+    .task-state.due { color: #a05b35; }
+    .task-state.soon { color: #69794f; }
+    .task-detail { margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; color: var(--muted); }
+    .done-btn { border: 0; border-radius: 8px; padding: 6px 9px; color: var(--leaf-dark); background: #e7efe3; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .done-btn:hover { background: #d8e8d5; }
+    .empty-card { display: grid; place-items: center; min-height: 250px; padding: 28px; text-align: center; box-shadow: none; }
+    .empty-icon { font-size: 40px; }
+    .empty-card h3 { margin: 10px 0 5px; font-size: 17px; }
+    .empty-card p { margin: 0; max-width: 260px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .form-card { padding: 21px; }
+    .form-card h2 { font-size: 19px; }
+    .form-card > p { margin: 6px 0 20px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .field { margin: 0 0 14px; }
+    .field label, .schedule-label { display: block; margin-bottom: 7px; color: #536258; font-size: 12px; font-weight: 700; }
+    .field input, .field select { width: 100%; border: 1px solid var(--line); border-radius: 11px; padding: 11px 12px; color: var(--ink); background: #fff; outline: none; }
+    .field input:focus, .field select:focus { border-color: #79a07f; box-shadow: 0 0 0 3px rgba(91, 139, 98, .12); }
+    .schedules { display: grid; gap: 9px; margin: 15px 0 18px; }
+    .schedule-row { display: grid; grid-template-columns: 1fr 92px; gap: 10px; align-items: center; padding: 10px; border-radius: 12px; background: #f7f8f4; }
+    .schedule-row label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 650; text-transform: capitalize; }
+    .schedule-row input[type="number"] { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 7px; color: var(--ink); text-align: center; background: white; }
+    .schedule-row input[type="checkbox"] { accent-color: var(--leaf); width: 15px; height: 15px; }
+    .add-btn { width: 100%; border: 0; border-radius: 12px; padding: 12px; background: var(--leaf); color: white; font-weight: 750; transition: background .15s, transform .15s; }
+    .add-btn:hover { background: var(--leaf-dark); transform: translateY(-1px); }
+    .form-error { min-height: 17px; margin: 9px 0 0; color: #a45343; font-size: 12px; }
+    .catalog { margin-top: 13px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 34px; color: #879188; font-size: 11px; }
+    footer a { color: var(--leaf); text-decoration: none; }
+    @media (max-width: 780px) {
+      .shell { padding: 20px 17px 38px; }
+      header { margin-bottom: 30px; }
+      .hero { grid-template-columns: 1fr; gap: 4px; padding-bottom: 22px; }
+      .hero-art { display: none; }
+      .garden-layout { grid-template-columns: 1fr; }
+      .form-card { grid-row: 1; }
+    }
+    @media (max-width: 480px) {
+      .stats { gap: 8px; }
+      .stat { padding: 13px 12px; border-radius: 14px; }
+      .stat-value { font-size: 21px; }
+      .today { font-size: 11px; }
+      .section-head { align-items: start; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="#top" aria-label="Plantscare home"><span class="brand-mark">✿</span><span>plantscare</span></a>
+      <time class="today" id="today"></time>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <div class="eyebrow"><span>☀</span> Your garden, gently organized</div>
+          <h1 id="hero-title">A little care,<br><span>right on time.</span></h1>
+          <p class="intro">Keep your plants happy with a simple journal for watering, pruning, and feeding. Set the rhythm that works for your garden.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true"><div class="sun"></div><div class="plant-pot">🪴</div></div>
+      </section>
+
+      <section class="stats" aria-label="Garden summary">
+        <div class="stat"><span class="stat-label">In your garden</span><span class="stat-value" id="plant-count">0 plants</span></div>
+        <div class="stat"><span class="stat-label">Care tasks due</span><span class="stat-value" id="due-count">0</span></div>
+        <div class="stat"><span class="stat-label">Next up</span><span class="stat-value" id="next-due">—</span></div>
+      </section>
+
+      <div class="section-head">
+        <div><h2>Your garden</h2><p class="section-note">A calm little reminder of what needs you next.</p></div>
+      </div>
+
+      <section class="garden-layout" aria-label="Plant journal">
+        <div class="plant-list" id="plant-list" aria-live="polite"></div>
+        <aside class="form-card" aria-labelledby="add-title">
+          <h2 id="add-title">Add a plant <span aria-hidden="true">＋</span></h2>
+          <p>Choose your own reminder intervals. Care needs vary by plant and growing conditions.</p>
+          <form id="plant-form">
+            <div class="field">
+              <label for="plant-name">Plant name</label>
+              <input id="plant-name" name="name" list="plant-suggestions" maxlength="60" placeholder="e.g. Tulsi" required>
+              <datalist id="plant-suggestions">
+                <option value="Tulsi (holy basil)"><option value="Curry leaf"><option value="Drumstick tree (moringa)"><option value="Arabian jasmine (mogra)">
+              </datalist>
+            </div>
+            <span class="schedule-label">Remind me every…</span>
+            <div class="schedules">
+              <div class="schedule-row"><label for="water-on"><input id="water-on" type="checkbox" checked> Water</label><input id="water-days" type="number" min="1" max="365" value="4" aria-label="Water every how many days"></div>
+              <div class="schedule-row"><label for="prune-on"><input id="prune-on" type="checkbox"> Prune</label><input id="prune-days" type="number" min="1" max="365" value="30" aria-label="Prune every how many days"></div>
+              <div class="schedule-row"><label for="feed-on"><input id="feed-on" type="checkbox"> Fertilize</label><input id="feed-days" type="number" min="1" max="365" value="30" aria-label="Fertilize every how many days"></div>
+            </div>
+            <button class="add-btn" type="submit">Add to my garden</button>
+            <p class="form-error" id="form-error" role="alert"></p>
+          </form>
+          <div class="catalog">Starter ideas: Tulsi · Curry leaf · Moringa · Jasmine</div>
+        </aside>
+      </section>
+    </main>
+
+    <footer><span>Your garden journal stays on this device.</span><a href="https://github.com/sushmaedula/plantscare">Plantscare on GitHub ↗</a></footer>
+  </div>
+  <script>
+    (() => {
+      const STORAGE_KEY = "plantscare.garden.v1";
+      const tasks = ["water", "prune", "fertilize"];
+      const icons = ["🪴", "🌿", "🌱", "🌼", "🍃"];
+      const today = new Date();
+      const isoToday = toISODate(today);
+      const dateFormatter = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" });
+      document.getElementById("today").textContent = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(today);
+
+      function toISODate(date) {
+        const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return local.toISOString().slice(0, 10);
+      }
+      function parseDate(value) {
+        const [year, month, day] = value.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      }
+      function daysBetween(from, to) {
+        return Math.round((parseDate(to) - parseDate(from)) / 86400000);
+      }
+      function loadPlants() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(saved) ? saved : [];
+        } catch { return []; }
+      }
+      let plants = loadPlants();
+      function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(plants)); }
+      function dueDate(schedule) {
+        return new Date(parseDate(schedule.lastDone || schedule.trackingFrom).getTime() + schedule.everyDays * 86400000);
+      }
+      function dateLabel(date) {
+        const dayDelta = Math.round((parseDate(toISODate(date)) - parseDate(isoToday)) / 86400000);
+        if (dayDelta === 0) return "Today";
+        if (dayDelta === 1) return "Tomorrow";
+        if (dayDelta === -1) return "Yesterday";
+        return dateFormatter.format(date);
+      }
+      function make(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+      function render() {
+        const list = document.getElementById("plant-list");
+        list.replaceChildren();
+        const dueItems = [];
+        plants.sort((a, b) => a.name.localeCompare(b.name));
+        for (const plant of plants) {
+          for (const task of tasks) {
+            const schedule = plant.care?.[task];
+            if (!schedule) continue;
+            const due = dueDate(schedule);
+            const delta = Math.round((due - parseDate(isoToday)) / 86400000);
+            if (delta <= 0) dueItems.push({ name: plant.name, task, due, delta });
+          }
+          const card = make("article", "plant-card");
+          const top = make("div", "plant-top");
+          const identity = make("div", "plant-name-row");
+          identity.append(make("span", "plant-icon", icons[plant.name.length % icons.length]));
+          const names = make("div");
+          names.append(make("h3", "plant-title", plant.name), make("p", "plant-subtitle", `${Object.keys(plant.care || {}).length} care ${Object.keys(plant.care || {}).length === 1 ? "reminder" : "reminders"}`));
+          identity.append(names);
+          const remove = make("button", "remove", "×");
+          remove.type = "button";
+          remove.setAttribute("aria-label", `Remove ${plant.name}`);
+          remove.addEventListener("click", () => {
+            plants = plants.filter(item => item.id !== plant.id);
+            save(); render();
+          });
+          top.append(identity, remove);
+          const taskGrid = make("div", "tasks");
+          for (const task of tasks) {
+            const schedule = plant.care?.[task];
+            if (!schedule) continue;
+            const due = dueDate(schedule);
+            const delta = Math.round((due - parseDate(isoToday)) / 86400000);
+            const taskBox = make("div", "task");
+            const line = make("div", "task-line");
+            line.append(make("span", "task-name", task));
+            const status = make("span", `task-state ${delta <= 0 ? "due" : delta <= 2 ? "soon" : ""}`, delta <= 0 ? "Due" : delta <= 2 ? "Coming up" : "On track");
+            line.append(status);
+            const detail = make("div", "task-detail");
+            detail.append(make("span", "", `Every ${schedule.everyDays} days · ${dateLabel(due)}`));
+            const done = make("button", "done-btn", "Done ✓");
+            done.type = "button";
+            done.setAttribute("aria-label", `Log ${task} for ${plant.name} today`);
+            done.addEventListener("click", () => {
+              schedule.lastDone = isoToday;
+              save(); render();
+            });
+            detail.append(done);
+            taskBox.append(line, detail);
+            taskGrid.append(taskBox);
+          }
+          card.append(top, taskGrid);
+          list.append(card);
+        }
+        if (plants.length === 0) {
+          const empty = make("div", "empty-card");
+          empty.append(make("div", "empty-icon", "🌱"), make("h3", "", "Your garden starts here"), make("p", "", "Add your first plant and set a reminder that suits its routine."));
+          list.append(empty);
+        }
+        document.getElementById("plant-count").textContent = `${plants.length} ${plants.length === 1 ? "plant" : "plants"}`;
+        document.getElementById("due-count").textContent = String(dueItems.length);
+        dueItems.sort((a, b) => a.delta - b.delta);
+        document.getElementById("next-due").textContent = dueItems.length ? dueItems[0].name : "All clear";
+      }
+      document.getElementById("plant-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const name = document.getElementById("plant-name").value.trim();
+        const care = {};
+        const fieldIds = { water: "water", prune: "prune", fertilize: "feed" };
+        for (const task of tasks) {
+          const prefix = fieldIds[task];
+          if (!document.getElementById(`${prefix}-on`).checked) continue;
+          const everyDays = Number(document.getElementById(`${prefix}-days`).value);
+          if (!Number.isInteger(everyDays) || everyDays < 1 || everyDays > 365) {
+            document.getElementById("form-error").textContent = "Choose an interval from 1 to 365 days.";
+            return;
+          }
+          care[task] = { everyDays, trackingFrom: isoToday, lastDone: null };
+        }
+        if (!name) return;
+        if (!Object.keys(care).length) {
+          document.getElementById("form-error").textContent = "Select at least one care reminder.";
+          return;
+        }
+        document.getElementById("form-error").textContent = "";
+        plants.push({ id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`, name, care });
+        save(); render();
+        event.target.reset();
+        document.getElementById("water-on").checked = true;
+        document.getElementById("plant-name").focus();
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>
